@@ -33,11 +33,15 @@ public struct Request {
         guard let url = components.url else { throw BuildError() }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue.uppercased()
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if !headers.keys.contains("Accept") {
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+        }
         headers.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
         if let body {
             request.httpBody = try encoder.encode(body)
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            if !headers.keys.contains("Content-Type") {
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            }
         }
 
         return request
