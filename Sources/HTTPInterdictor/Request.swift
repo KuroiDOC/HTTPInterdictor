@@ -13,7 +13,7 @@ public struct Request {
     public var headers: [String: String]
     public var queryItems: [URLQueryItem]?
     public var body: Encodable?
-    public var encoder: JSONEncoder
+    public var encoder: JSONEncoder?
 
     public init(url: URL, method: Method = .get, headers: [String : String] = [:], queryItems: [URLQueryItem]? = nil, body: Encodable? = nil, encoder: JSONEncoder = JSONEncoder()) {
         self.url = url
@@ -22,6 +22,14 @@ public struct Request {
         self.queryItems = queryItems
         self.body = body
         self.encoder = encoder
+    }
+
+    public init(url: URL, method: Method = .get, headers: [String : String] = [:], queryItems: [URLQueryItem]? = nil, rawBody: Data) {
+        self.url = url
+        self.method = method
+        self.headers = headers
+        self.queryItems = queryItems
+        self.body = rawBody
     }
 
     fileprivate func buildURLRequest() throws -> URLRequest {
@@ -38,7 +46,7 @@ public struct Request {
         }
         headers.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
         if let body {
-            request.httpBody = try encoder.encode(body)
+            request.httpBody = (try encoder?.encode(body)) ?? (body as? Data)
             if !headers.keys.contains("Content-Type") {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
