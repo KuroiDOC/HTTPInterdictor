@@ -8,7 +8,7 @@
 import Foundation
 @testable import HTTPInterdictor
 
-class FakeClient: HTTPInterdictor {
+class FakeClient: HTTPInterdictor, @unchecked Sendable {
     var handler: (Request) async throws -> Response
 
     init(handler: @escaping (Request) -> Response) {

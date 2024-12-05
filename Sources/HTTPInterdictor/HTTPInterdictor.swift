@@ -2,7 +2,7 @@ import Foundation
 
 public typealias Response = (Data, URLResponse)
 
-public class HTTPInterdictor {
+public class HTTPInterdictor: @unchecked Sendable {
     var session = URLSession.shared
     var interceptors: [Interceptor] = []
 

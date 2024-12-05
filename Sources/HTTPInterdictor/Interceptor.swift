@@ -7,13 +7,13 @@
 
 import Foundation
 
-public class InterceptorChain {
+public actor InterceptorChain: Sendable {
     public let originalRequest: Request
     public private(set) var request: Request
     private var iterator: IndexingIterator<[Interceptor]>
     private let completion: (Request) async throws -> Response
 
-    internal init(request: Request, interceptors: [Interceptor], completion: @escaping (Request) async throws -> Response) {
+    internal init(request: Request, interceptors: [Interceptor], completion: @Sendable @escaping (Request) async throws -> Response) {
         self.request = request
         self.originalRequest = request
         self.completion = completion
@@ -31,6 +31,6 @@ public class InterceptorChain {
     }
 }
 
-public protocol Interceptor {
+public protocol Interceptor: Sendable {
     func intercept(chain: InterceptorChain) async throws -> Response
 }
